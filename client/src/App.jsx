@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 
-const API_URL = "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function App() {
   const [page, setPage] = useState("home");
@@ -11,6 +11,7 @@ function App() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [whatsappOptIn, setWhatsappOptIn] = useState(false);
   const [password, setPassword] = useState("");
 
   // Messages
@@ -25,6 +26,10 @@ function App() {
   // Vaccine list
   const [vaccines, setVaccines] = useState([]);
   const [loadingVaccines, setLoadingVaccines] = useState(false);
+  const [profilePhone, setProfilePhone] = useState("");
+  const [profileWhatsAppOptIn, setProfileWhatsAppOptIn] = useState(false);
+  const [profileMessage, setProfileMessage] = useState("");
+  const [whatsappTestSending, setWhatsappTestSending] = useState(false);
 
   // Editing vaccine ID
   const [editingId, setEditingId] = useState(null);
@@ -62,7 +67,7 @@ const overdueVaccines = vaccines.filter((vaccine) => {
 
     const body =
       page === "register"
-        ? { name, email, password, phone }
+        ? { name, email, password, phone, whatsappOptIn }
         : { email, password };
 
     try {
@@ -132,10 +137,100 @@ const overdueVaccines = vaccines.filter((vaccine) => {
     }
   };
 
+  const fetchProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const response = await fetch(`${API_URL}/api/profile`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setProfileMessage(data.message || "Could not load your profile.");
+        return;
+      }
+
+      setProfilePhone(data.phone || "");
+      setProfileWhatsAppOptIn(Boolean(data.whatsappOptIn));
+    } catch (error) {
+      console.error(error);
+      setProfileMessage("Could not connect to load your profile.");
+    }
+  };
+
+  const handleProfileSave = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(`${API_URL}/api/profile`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          phone: profilePhone,
+          whatsappOptIn: profileWhatsAppOptIn
+        })
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setProfileMessage(data.message || "Could not save your profile.");
+        return;
+      }
+
+      setProfilePhone(data.phone || "");
+      setProfileWhatsAppOptIn(Boolean(data.whatsappOptIn));
+      setProfileMessage("WhatsApp reminder settings saved.");
+    } catch (error) {
+      console.error(error);
+      setProfileMessage("Could not connect to save your profile.");
+    }
+  };
+
+  const handleWhatsAppTest = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setProfileMessage("Please log in again.");
+      setPage("login");
+      return;
+    }
+
+    setWhatsappTestSending(true);
+    setProfileMessage("");
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/reminders/test-whatsapp`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      const data = await response.json();
+      setProfileMessage(
+        data.message ||
+          (response.ok
+            ? "WhatsApp test reminder sent."
+            : "Could not send WhatsApp test reminder.")
+      );
+    } catch (error) {
+      console.error(error);
+      setProfileMessage("Could not connect to send a WhatsApp test.");
+    } finally {
+      setWhatsappTestSending(false);
+    }
+  };
+
   // LOAD VACCINES WHEN DASHBOARD OPENS
   useEffect(() => {
     if (page === "dashboard") {
       fetchVaccines();
+      fetchProfile();
     }
   }, [page]);
 
@@ -374,7 +469,16 @@ const overdueVaccines = vaccines.filter((vaccine) => {
                   placeholder="WhatsApp number (with country code)"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  required={whatsappOptIn}
                 />
+                <label className="consent-option">
+                  <input
+                    type="checkbox"
+                    checked={whatsappOptIn}
+                    onChange={(e) => setWhatsappOptIn(e.target.checked)}
+                  />
+                  I agree to receive vaccine reminders on WhatsApp.
+                </label>
               </>
             )}
 
@@ -427,6 +531,47 @@ const overdueVaccines = vaccines.filter((vaccine) => {
           <h1>Welcome to Your Dashboard!</h1>
 
           <p>Manage your vaccination schedule here.</p>
+
+          <div className="feature-card reminder-settings">
+            <h2>WhatsApp Reminder Settings</h2>
+            <p>
+              Enter your number in international format, for example +14155552671.
+              Reminders are sent 3 days and 2 days before a vaccine is due.
+            </p>
+            <form onSubmit={handleProfileSave}>
+              <label htmlFor="profile-phone">WhatsApp phone number</label>
+              <input
+                id="profile-phone"
+                type="tel"
+                autoComplete="tel"
+                placeholder="+14155552671"
+                value={profilePhone}
+                onChange={(event) => setProfilePhone(event.target.value)}
+                required={profileWhatsAppOptIn}
+              />
+              <label className="consent-option">
+                <input
+                  type="checkbox"
+                  checked={profileWhatsAppOptIn}
+                  onChange={(event) =>
+                    setProfileWhatsAppOptIn(event.target.checked)
+                  }
+                />
+                I agree to receive vaccine reminders on WhatsApp.
+              </label>
+              <button type="submit">Save reminder settings</button>
+            </form>
+            <button
+              type="button"
+              onClick={handleWhatsAppTest}
+              disabled={whatsappTestSending}
+            >
+              {whatsappTestSending ? "Sending test..." : "Send WhatsApp test"}
+            </button>
+            <p className="status-message" role="status" aria-live="polite">
+              {profileMessage}
+            </p>
+          </div>
           
 {/* DASHBOARD STATISTICS */}
 <div className="feature-list">

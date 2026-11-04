@@ -10,8 +10,13 @@ const sendWhatsApp = async (phone, vaccineName, daysLeft, dueDate) => {
       process.env.WHATSAPP_TEMPLATE_LANGUAGE || "en_US";
 
     if (!phoneNumberId || !token) {
-      console.log("WhatsApp credentials are not configured.");
-      return;
+      throw new Error(
+        "WhatsApp is not configured. Set WHATSAPP_PHONE_NUMBER_ID and WHATSAPP_ACCESS_TOKEN."
+      );
+    }
+
+    if (!/^v\d+\.\d+$/.test(apiVersion)) {
+      throw new Error("WHATSAPP_API_VERSION must look like v23.0.");
     }
 
     const response = await fetch(
@@ -44,15 +49,19 @@ const sendWhatsApp = async (phone, vaccineName, daysLeft, dueDate) => {
       }
     );
 
-    const result = await response.json();
+    const result = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      throw new Error(JSON.stringify(result));
+      throw new Error(
+        result.error?.message || `WhatsApp API returned HTTP ${response.status}.`
+      );
     }
 
-    console.log("WhatsApp message sent to:", phone);
+    return result;
   } catch (error) {
-    console.error("WhatsApp sending failed:", error.message);
+    throw new Error(`WhatsApp sending failed: ${error.message}`, {
+      cause: error
+    });
   }
 };
 

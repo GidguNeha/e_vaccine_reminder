@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "test": "node --test src/services/reminderService.test.js src/services/whatsapp.test.js src/utils/whatsappPhone.test.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

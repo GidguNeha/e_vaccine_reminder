@@ -102,6 +102,34 @@ button:hover {
   text-align: center;
 }
 
+.reminder-settings {
+  width: min(100%, 560px);
+  margin: 28px auto;
+}
+
+.reminder-settings label {
+  display: block;
+  margin-top: 12px;
+  text-align: left;
+}
+
+.reminder-settings .consent-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 14px 0;
+  text-align: left;
+}
+
+.reminder-settings .consent-option input {
+  width: auto;
+  margin: 4px 0 0;
+}
+
+.status-message {
+  min-height: 1.5em;
+}
+
 .feature-card h1,
 .feature-card h2,
 .feature-card h3 {
@@ -132,6 +160,19 @@ button:hover {
   font-size: 15px;
   background: white;
   color: #243447;
+}
+
+.login .consent-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 12px 0;
+  text-align: left;
+}
+
+.login .consent-option input {
+  width: auto;
+  margin: 4px 0 0;
 }
 
 .feature-card input:focus,

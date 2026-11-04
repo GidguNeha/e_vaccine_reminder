@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
       default: ""
+    },
+    whatsappOptIn: {
+      type: Boolean,
+      default: false
     }
   },
   {

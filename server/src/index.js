@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
 import vaccineRoutes from "./routes/vaccines.js";
 import reminderRoutes from "./routes/reminders.js";
+import profileRoutes from "./routes/profile.js";
 
 import {
   startReminderService
@@ -17,12 +18,15 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173"
-  ]
-}));
+const allowedOrigins = (
+  process.env.CLIENT_ORIGIN ||
+  "http://localhost:5173,http://127.0.0.1:5173"
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(cors({ origin: allowedOrigins }));
 
 app.use(express.json());
 
@@ -35,6 +39,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/vaccines", vaccineRoutes);
 app.use("/api/reminders", reminderRoutes);
+app.use("/api/profile", profileRoutes);
 
 // Server configuration
 const PORT = process.env.PORT || 5000;
