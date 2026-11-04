@@ -1,0 +1,8 @@
+**/node_modules/
+**/dist/
+**/.env
+!.env.example
+
+# These are separate, empty Git repositories, not project source.
+/e_vaccine_remainder/
+/e_vaccine_reminder/

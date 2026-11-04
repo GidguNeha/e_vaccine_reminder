@@ -1,0 +1,193 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f8fb;
+  color: #243447;
+}
+
+/* Navigation bar */
+.navbar {
+  background: #087f8c;
+  color: white;
+  padding: 20px 7%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar h1 {
+  color: white;
+}
+
+.navbar button {
+  margin-left: 12px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Hero section */
+.hero {
+  text-align: center;
+  padding: 90px 20px;
+  background: #dff5f3;
+}
+
+.hero h1 {
+  font-size: 38px;
+  margin-bottom: 20px;
+  color: #087f8c;
+}
+
+.hero p {
+  margin-bottom: 25px;
+  font-size: 18px;
+}
+
+/* Buttons */
+button {
+  background: #087f8c;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #05636d;
+}
+
+/* Dashboard */
+.features {
+  padding: 55px 7%;
+  text-align: center;
+}
+
+.features h1 {
+  color: #173b50;
+  font-size: 36px;
+  margin-bottom: 15px;
+}
+
+.features > p {
+  color: #526779;
+  font-size: 18px;
+}
+
+.feature-list {
+  display: flex;
+  gap: 25px;
+  justify-content: center;
+  align-items: stretch;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  background: white;
+  padding: 30px;
+  border-radius: 14px;
+  width: 280px;
+  box-shadow: 0 3px 12px #00000012;
+  color: #243447;
+  text-align: center;
+}
+
+.feature-card h1,
+.feature-card h2,
+.feature-card h3 {
+  color: #087f8c;
+  margin-bottom: 15px;
+}
+
+.feature-card h1 {
+  font-size: 42px;
+}
+
+.feature-card p {
+  margin-top: 15px;
+  line-height: 1.5;
+  color: #526779;
+}
+
+/* Form fields */
+.feature-card input,
+.feature-card textarea,
+.feature-card select,
+.login input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #cbd5df;
+  border-radius: 6px;
+  font-size: 15px;
+  background: white;
+  color: #243447;
+}
+
+.feature-card input:focus,
+.feature-card textarea:focus,
+.login input:focus {
+  outline: none;
+  border-color: #087f8c;
+}
+
+/* Edit and delete buttons */
+.feature-card button {
+  margin: 8px 4px;
+}
+
+/* Login and registration */
+.login {
+  background: white;
+  padding: 35px;
+  margin: 30px auto;
+  max-width: 400px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 3px 12px #00000012;
+}
+
+.login h1,
+.login h2 {
+  color: #087f8c;
+  margin-bottom: 15px;
+}
+
+/* Footer */
+footer {
+  background: #243447;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Mobile responsive design */
+@media (max-width: 768px) {
+  .feature-list {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .feature-card {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .features h1 {
+    font-size: 28px;
+  }
+
+  .navbar {
+    padding: 15px 5%;
+  }
+}
